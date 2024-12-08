@@ -28,5 +28,5 @@ Ein WordPress-Plugin, das einen Hinweis-Slider anzeigt, um Besuchern mitzuteilen
 2. Füge die folgende Zeile in den Plugin-Header ein:
    ```php
    /*
-   GitHub Plugin URI: https://github.com/https://github.com/M-Wiecha/portfolio-slider-hinweis
+   GitHub Plugin URI: https://github.com/M-Wiecha/portfolio-slider-hinweis
    */
