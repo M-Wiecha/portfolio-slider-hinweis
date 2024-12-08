@@ -4,6 +4,7 @@ Plugin Name: Portfolio Hinweis Slider
 Description: Zeigt einen Hinweis-Slider an, dass das Portfolio noch im Aufbau ist. Hinweistext und Optionen sind anpassbar.
 Version: 1.0
 Author: Webdesigner Mario
+GitHub Plugin URI: https://github.com/M-Wiecha/portfolio-slider-hinweis
 AUTHOR URI: https://www.webdesigner-mario.de/
 */
 
@@ -12,10 +13,79 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// Version des Plugins anzeigen
+function portfolio_slider_version_info() {
+    $plugin_data = get_file_data(
+        __FILE__,
+        array('Version' => 'Version'),
+        'plugin'
+    );
+
+    $version = $plugin_data['Version'];
+
+    echo '<div class="notice notice-info is-dismissible">';
+    echo '<p>Portfolio Hinweis Slider - Aktuelle Version: <strong>' . esc_html( $version ) . '</strong></p>';
+    echo '</div>';
+}
+add_action('admin_notices', 'portfolio_slider_version_info');
+
+// Automatische Updates für das Plugin aktivieren
+add_filter('auto_update_plugin', function ($update, $item) {
+    // Plugin-Dateiname (muss mit deinem Plugin-Ordner und Dateinamen übereinstimmen)
+    $plugin_file = plugin_basename(__FILE__);
+
+    if (isset($item->plugin) && $item->plugin === $plugin_file) {
+        return true; // Aktiviert automatische Updates
+    }
+
+    return $update;
+}, 10, 2);
+
+// Einstellung für automatische Updates registrieren
+function portfolio_slider_register_auto_update_setting() {
+    register_setting('portfolio_slider_settings_group', 'portfolio_slider_auto_update');
+}
+add_action('admin_init', 'portfolio_slider_register_auto_update_setting');
+
+// Einstellung ins Admin-Menü einfügen
+function portfolio_slider_auto_update_option() {
+    ?>
+    <tr valign="top">
+        <th scope="row">Automatische Updates aktivieren</th>
+        <td>
+            <input type="checkbox" name="portfolio_slider_auto_update" value="yes"
+                <?php checked(get_option('portfolio_slider_auto_update', 'no'), 'yes'); ?> />
+            Ja
+        </td>
+    </tr>
+    <?php
+}
+add_action('admin_menu', function () {
+    add_settings_field(
+        'portfolio_slider_auto_update',
+        'Automatische Updates aktivieren',
+        'portfolio_slider_auto_update_option',
+        'general'
+    );
+});
+
+// Automatische Updates basierend auf Benutzereinstellung aktivieren
+add_filter('auto_update_plugin', function ($update, $item) {
+    // Plugin-Dateiname
+    $plugin_file = plugin_basename(__FILE__);
+
+    if (isset($item->plugin) && $item->plugin === $plugin_file) {
+        // Aktivieren nur, wenn die Option gesetzt ist
+        return get_option('portfolio_slider_auto_update', 'no') === 'yes';
+    }
+
+    return $update;
+}, 10, 2);
+
 // CSS und JavaScript hinzufügen
 function portfolio_slider_enqueue_assets() {
     // Prüfen, ob das Plugin aktiv ist
-    if ( get_option( 'portfolio_slider_active', 'yes' ) === 'yes' ) {
+    if ( get_option( 'portfolio_slider_active', 'no' ) === 'yes' ) {
         wp_enqueue_style(
             'portfolio-slider-css',
             plugin_dir_url( __FILE__ ) . 'css/portfolio-slider.css'
@@ -34,7 +104,7 @@ add_action( 'wp_enqueue_scripts', 'portfolio_slider_enqueue_assets' );
 // HTML für den Slider ausgeben
 function portfolio_slider_output() {
     // Prüfen, ob das Plugin aktiv ist
-    if ( get_option( 'portfolio_slider_active', 'yes' ) !== 'yes' ) {
+    if ( get_option( 'portfolio_slider_active', 'no' ) !== 'yes' ) {
         return;
     }
 
