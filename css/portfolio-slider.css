@@ -1,0 +1,33 @@
+#notification-bar {
+    position: fixed;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    background-color: #f39c12;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    z-index: 9999;
+    transition: top 0.5s ease-in-out;
+}
+
+#notification-bar.active {
+    top: 0;
+}
+
+#close-notification {
+    margin-top: 10px;
+    padding: 5px 15px;
+    font-size: 14px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#close-notification:hover {
+    background-color: #c0392b;
+}
